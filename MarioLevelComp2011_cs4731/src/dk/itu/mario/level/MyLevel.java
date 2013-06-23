@@ -16,6 +16,8 @@ public class MyLevel extends Level{
 	 public   int BLOCKS_COINS = 0; // the number of coin blocks
 	 public   int BLOCKS_POWER = 0; // the number of power blocks
 	 public   int COINS = 0; //These are the coins in boxes that Mario collect
+	 
+	 
 
  
 	private static Random levelSeedRandom = new Random();
@@ -27,6 +29,10 @@ public class MyLevel extends Level{
 	    private int difficulty;
 	    private int type;
 		private int gaps;
+		private GamePlay stats;
+		
+		private final double SUCCESS_RATIO = 0.8;
+		
 		
 		public MyLevel(int width, int height)
 	    {
@@ -37,13 +43,14 @@ public class MyLevel extends Level{
 		public MyLevel(int width, int height, long seed, int difficulty, int type, GamePlay playerMetrics)
 	    {
 	        this(width, height);
-	        creat(seed, difficulty, type);
+	        creat(seed, difficulty, type,playerMetrics);
 	    }
 
-	    public void creat(long seed, int difficulty, int type)
+	    public void creat(long seed, int difficulty, int type, GamePlay playerMetrics)
 	    {
 	        this.type = type;
 	        this.difficulty = difficulty;
+	        this.stats = playerMetrics;
 
 	        lastSeed = seed;
 	        random = new Random(seed);
@@ -105,6 +112,32 @@ public class MyLevel extends Level{
 
 	        fixWalls();
 
+	    }
+	    
+	    /*
+	     * Still deciding on actual design, so placing any logic I find about learning about the player here
+	     * 
+	     */
+	    
+	    public void evaluatePlayer()
+	    {
+	    	if(this.stats != null)
+	    	{
+	    		if(stats.coinsCollected/stats.totalCoins > SUCCESS_RATIO)
+	    			//IsCoinCollector, increase number of coins at least
+	    			
+	    		if(stats.timeSpentRunning/stats.completionTime > SUCCESS_RATIO)
+	    			// Is Speed Runner, increase number of enemies
+	    		if(stats.aimlessJumps > 5)
+	    		{
+	    			int a = 5;
+	    		}
+	    			// Bored player, throw everything at player
+
+	    		
+	    		
+	    	}
+	    	
 	    }
 
 
