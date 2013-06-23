@@ -17,8 +17,14 @@ public class MyLevel extends Level{
 	 public   int BLOCKS_POWER = 0; // the number of power blocks
 	 public   int COINS = 0; //These are the coins in boxes that Mario collect
 	 
+	 private static final int ODDS_STRAIGHT = 0;
+	 private static final int ODDS_HILL_STRAIGHT = 1;
+	 private static final int ODDS_TUBES = 2;
+     private static final int ODDS_JUMP = 3;
+	 private static final int ODDS_CANNONS = 4;
 	 
-
+	 private int[] odds = new int[5];
+	 private int totalOdds = 0;
  
 	private static Random levelSeedRandom = new Random();
 	    public static long lastSeed;
@@ -31,7 +37,8 @@ public class MyLevel extends Level{
 		private int gaps;
 		private GamePlay stats;
 		
-		private final double SUCCESS_RATIO = 0.8;
+		private final double SUCCESS_RATIO = 0.80;
+		private boolean isKiller;
 		
 		
 		public MyLevel(int width, int height)
@@ -51,16 +58,30 @@ public class MyLevel extends Level{
 	        this.type = type;
 	        this.difficulty = difficulty;
 	        this.stats = playerMetrics;
+	        for(int i = 0; i < odds.length; i++)
+	        	odds[i] = 20;
+	        isKiller = false;
+	        evaluatePlayer();
 
 	        lastSeed = seed;
 	        random = new Random(seed);
+	        
+	        for (int i = 0; i < odds.length; i++) {
+	            //failsafe (no negative odds)
+	            if (odds[i] < 0) {
+	                odds[i] = 0;
+	            }
+
+	            totalOdds += odds[i];
+	            odds[i] = totalOdds - odds[i];
+	        }
 
 	        //create the start location
 	        int length = 0;
 	        length += buildStraight(0, width, true);
 
 	        //create all of the medium sections
-	        while (length < width - 64)
+	    /*    while (length < width - 64)
 	        {
 	            //length += buildZone(length, width - length);
 				length += buildStraight(length, width-length, false);
@@ -69,7 +90,12 @@ public class MyLevel extends Level{
 				length += buildJump(length, width-length);
 				length += buildTubes(length, width-length);
 				length += buildCannons(length, width-length);
+	        }*/
+	        while (length < width - 64)
+	        {
+	        	length += buildSection(length, width - length);
 	        }
+	        
 
 	        //set the end piece
 	        int floor = height - 1 - random.nextInt(4);
@@ -127,17 +153,59 @@ public class MyLevel extends Level{
 	    			//IsCoinCollector, increase number of coins at least
 	    			
 	    		if(stats.timeSpentRunning/stats.completionTime > SUCCESS_RATIO)
+	    		{
+	    			odds[ODDS_STRAIGHT] /= 2;
+	    			odds[ODDS_JUMP] *= 2;
+	    			odds[ODDS_CANNONS] *= 2;
+	    		}
 	    			// Is Speed Runner, increase number of enemies
 	    		if(stats.aimlessJumps > 5)
 	    		{
 	    			int a = 5;
 	    		}
-	    			// Bored player, throw everything at player
+	    		int totalKilled = stats.RedTurtlesKilled + stats.GreenTurtlesKilled +  stats.ArmoredTurtlesKilled + stats.CannonBallKilled + stats.JumpFlowersKilled + stats.ChompFlowersKilled;
+	    		
+	    		if(totalKilled/stats.totalEnemies > SUCCESS_RATIO)
+	    		{
+	    			this.difficulty = 4;
+	    			odds[ODDS_JUMP] = 30;
+	    		}
+	
 
 	    		
 	    		
 	    	}
 	    	
+	    }
+	    
+	    private int buildSection(int x, int maxLength)
+	    {
+	        int val = random.nextInt(totalOdds);
+	        int type = 0;
+
+	        for (int i = 0; i < odds.length; i++) 
+	        {
+	        	if (odds[i] <= val) 
+	                type = i;
+	        }
+
+	        switch (type) 
+	        {
+	        case ODDS_STRAIGHT:
+	            return buildStraight(x, maxLength, false);
+	        case ODDS_HILL_STRAIGHT:
+	            return buildHillStraight(x, maxLength);
+	        case ODDS_TUBES:
+	            return buildTubes(x, maxLength);
+	        case ODDS_JUMP:
+	            if (gaps < Constraints.gaps)
+	                return buildJump(x, maxLength);
+	            else
+	                return buildStraight(x, maxLength, false);
+	        case ODDS_CANNONS:
+	            return buildCannons(x, maxLength);
+	        }
+	        return 0;
 	    }
 
 
