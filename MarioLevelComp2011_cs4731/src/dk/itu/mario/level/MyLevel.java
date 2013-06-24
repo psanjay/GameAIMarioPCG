@@ -38,7 +38,6 @@ public class MyLevel extends Level{
 		private GamePlay stats;
 		
 		private final double SUCCESS_RATIO = 0.80;
-		private boolean isKiller;
 		
 		
 		public MyLevel(int width, int height)
@@ -57,16 +56,17 @@ public class MyLevel extends Level{
 	    {
 	        this.type = type;
 	        this.difficulty = difficulty;
+	   //     this.difficulty = 5;
 	        this.stats = playerMetrics;
 	        for(int i = 0; i < odds.length; i++)
 	        	odds[i] = 20;
-	        isKiller = false;
 	        evaluatePlayer();
 
 	        lastSeed = seed;
 	        random = new Random(seed);
 	        
-	        for (int i = 0; i < odds.length; i++) {
+	        for (int i = 0; i < odds.length; i++) 
+	        {
 	            //failsafe (no negative odds)
 	            if (odds[i] < 0) {
 	                odds[i] = 0;
@@ -91,6 +91,8 @@ public class MyLevel extends Level{
 				length += buildTubes(length, width-length);
 				length += buildCannons(length, width-length);
 	        }*/
+	        
+	        // Build as many sections as we can, each section built is decided randomly using odds
 	        while (length < width - 64)
 	        {
 	        	length += buildSection(length, width - length);
@@ -150,7 +152,10 @@ public class MyLevel extends Level{
 	    	if(this.stats != null)
 	    	{
 	    		if(stats.coinsCollected/stats.totalCoins > SUCCESS_RATIO)
-	    			//IsCoinCollector, increase number of coins at least
+	    			//IsCoinCollector, increase number of coins at least, probably enemies as well
+	    		{
+	    			odds[ODDS_CANNONS] *= 2;
+	    		}
 	    			
 	    		if(stats.timeSpentRunning/stats.completionTime > SUCCESS_RATIO)
 	    		{
@@ -168,10 +173,13 @@ public class MyLevel extends Level{
 	    		if(totalKilled/stats.totalEnemies > SUCCESS_RATIO)
 	    		{
 	    			this.difficulty = 4;
-	    			odds[ODDS_JUMP] = 30;
+	    			odds[ODDS_JUMP] *= 2;
 	    		}
 	
-
+	    		for(int i = 0; i < odds.length; i++)
+	    		{
+	    			System.out.println(i + ": " + odds[i]);
+	    		}
 	    		
 	    		
 	    	}
