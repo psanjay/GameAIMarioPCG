@@ -154,11 +154,13 @@ public class MyLevel extends Level{
 	    		if(stats.coinsCollected/stats.totalCoins > SUCCESS_RATIO)
 	    			//IsCoinCollector, increase number of coins at least, probably enemies as well
 	    		{
-	    			odds[ODDS_CANNONS] *= 2;
+	    			System.out.println("hi1");
+	    			odds[ODDS_STRAIGHT] *= 2;
 	    		}
 	    			
 	    		if(stats.timeSpentRunning/stats.completionTime > SUCCESS_RATIO)
 	    		{
+	    			System.out.println("hi2");
 	    			odds[ODDS_STRAIGHT] /= 2;
 	    			odds[ODDS_JUMP] *= 2;
 	    			odds[ODDS_CANNONS] *= 2;
@@ -172,6 +174,7 @@ public class MyLevel extends Level{
 	    		
 	    		if(totalKilled/stats.totalEnemies > SUCCESS_RATIO)
 	    		{
+	    			System.out.println("hi3");
 	    			this.difficulty = 4;
 	    			odds[ODDS_JUMP] *= 2;
 	    		}
@@ -516,7 +519,7 @@ public class MyLevel extends Level{
 	        addEnemyLine(xStart + 1, xLength - 1, floor - 1);
 
 	        int s = random.nextInt(4);
-	        int e = random.nextInt(4);
+	        int e = random.nextInt(2);
 
 	        if (floor - 2 > 0){
 	            if ((xLength - 1 - e) - (xStart + 1 + s) > 1){
@@ -528,7 +531,7 @@ public class MyLevel extends Level{
 	        }
 
 	        s = random.nextInt(4);
-	        e = random.nextInt(4);
+	        e = random.nextInt(2);
 	        
 	        //this fills the set of blocks and the hidden objects inside them
 	        if (floor - 4 > 0)
