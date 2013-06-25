@@ -153,14 +153,14 @@ public class MyLevel extends RandomLevel{
     {
     	if(this.stats != null)
     	{
-    		if(stats.coinsCollected/stats.totalCoins > SUCCESS_RATIO)
+    		if(stats.coinsCollected/(stats.totalCoins+1) > SUCCESS_RATIO)
     			//IsCoinCollector, increase number of coins at least, probably enemies as well
     		{
     			System.out.println("hi1");
     			odds[ODDS_STRAIGHT] *= 2;
     		}
     			
-    		if(stats.timeSpentRunning/stats.completionTime > SUCCESS_RATIO)
+    		if(stats.timeSpentRunning/(stats.completionTime+1) > SUCCESS_RATIO)
     		{
     			System.out.println("hi2");
     			odds[ODDS_STRAIGHT] /= 2;
@@ -174,7 +174,7 @@ public class MyLevel extends RandomLevel{
     		}
     		int totalKilled = stats.RedTurtlesKilled + stats.GreenTurtlesKilled +  stats.ArmoredTurtlesKilled + stats.CannonBallKilled + stats.JumpFlowersKilled + stats.ChompFlowersKilled;
     		
-    		if(totalKilled/stats.totalEnemies > SUCCESS_RATIO)
+    		if(totalKilled/(stats.totalEnemies+1) > SUCCESS_RATIO)
     		{
     			System.out.println("hi3");
     			this.difficulty = 4;
