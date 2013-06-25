@@ -11,7 +11,7 @@ import dk.itu.mario.engine.sprites.SpriteTemplate;
 import dk.itu.mario.engine.sprites.Enemy;
 
 
-public class MyLevel extends Level{
+public class MyLevel extends RandomLevel{
 	//Store information about the level
 	 public   int ENEMIES = 0; //the number of enemies the level contains
 	 public   int BLOCKS_EMPTY = 0; // the number of empty blocks
@@ -58,7 +58,7 @@ public class MyLevel extends Level{
     {
         this.type = type;
         this.difficulty = difficulty;
-        this.difficulty = 35;
+        this.difficulty = 2;
         this.stats = playerMetrics;
         for(int i = 0; i < odds.length; i++)
         	odds[i] = 20;

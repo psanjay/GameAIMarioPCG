@@ -19,10 +19,13 @@ public class MyLevelGenerator extends CustomizedLevelGenerator implements LevelG
 		int equive_walk_time = Completion_Time+Time_Run-playerMetrics.timeSpentDucking;
 		if (Completion_Time == 0)
 			equive_walk_time = playerMetrics.totalTime;
-		equive_walk_time = 60;
+		if (equive_walk_time > 120)
+			equive_walk_time = 120;
+		if (equive_walk_time < 60)
+			equive_walk_time = 60;
 		int Level_Length = equive_walk_time*5;
 		long Seed = 8;
-		System.out.println("Time to Complete: " + Completion_Time + " Time Running Left: " + playerMetrics.timeRunningLeft + " Time Running Right: " + playerMetrics.timeRunningRight + "New Length: " + Level_Length + " Seed: " + Seed);
+		System.out.println("Time to Complete: " + Completion_Time + " Time Running Left: " + playerMetrics.timeRunningLeft + " Time Running Right: " + playerMetrics.timeRunningRight + " New Length: " + Level_Length + " Seed: " + Seed);
 		LevelInterface level = new MyLevel(Level_Length,15,Seed,1,LevelInterface.TYPE_OVERGROUND,playerMetrics);
 		return level;
 	}
