@@ -271,15 +271,22 @@ public class MyLevel extends RandomLevel{
       //run from the start x position, for the whole length
         for (int x = xo; x < xo + length; x++)
         {
-            if (x < xo + js || x > xo + length - js - 1)
+         //   if (x < xo + js || x > xo + length - js - 1)
             {
             	//run for all y's since we need to paint blocks upward
                 for (int y = 0; y < height; y++)
                 {	//paint ground up until the floor
                     if (y >= floor)
                     {
-                        setBlock(x, y, GROUND);
+                    	if(x < xo + js || x > xo + length - js - 1)
+                    		setBlock(x, y, GROUND);
+                        else
+                        {
+                        	setBlock(x ,height + 2, COIN);
+                        	COINS++;
+                        }
                     }
+ 
                   //if it is above ground, start making stairs of rocks
                     else if (hasStairs)
                     {	//LEFT SIDE
@@ -291,7 +298,7 @@ public class MyLevel extends RandomLevel{
                                 setBlock(x, y, ROCK);
                             }
                         }
-                        else
+                        else if(x > xo + length - js - 1)
                         { //RIGHT SIDE
                             if (y >= floor - ((xo + length) - x) + 2)
                             {
@@ -398,7 +405,7 @@ public class MyLevel extends RandomLevel{
                     occupied[xxo - xo] = true;
                     occupied[xxo - xo + l] = true;
                     addEnemyLine(xxo, xxo + l, h - 1);
-                    if (random.nextInt(4) == 0)
+                    if (random.nextInt(4) < 2)
                     {
                         decorate(xxo - 1, xxo + l + 1, h);
                         keepGoing = false;
