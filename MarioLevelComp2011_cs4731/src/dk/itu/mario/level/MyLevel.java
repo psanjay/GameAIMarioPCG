@@ -58,7 +58,7 @@ public class MyLevel extends Level{
     {
         this.type = type;
         this.difficulty = difficulty;
-        this.difficulty = 35;
+        this.difficulty = 5;
         this.stats = playerMetrics;
         for(int i = 0; i < odds.length; i++)
         	odds[i] = 20;
