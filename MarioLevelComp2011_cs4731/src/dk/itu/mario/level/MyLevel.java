@@ -207,6 +207,9 @@ public class MyLevel extends RandomLevel{
     			odds[ODDS_CANNONS] *= 2;
     		}
     		
+    		if ((JumpFlowers_weight + ChompFlowers_weight) > 20)
+    			odds[ODDS_TUBES] *= 2;
+    		
     		System.out.println("Goomba: " + Goombas_weight + " Jump: " + JumpFlowers_weight + " Chomp: " + ChompFlowers_weight + " Red: " + RedTurtles_weight + " Green: " + GreenTurtles_weight + " Spiky: " + ArmoredTurtles_weight + " Cannon: " + CannonBall_weight);
 
     		for(int i = 0; i < odds.length; i++)
@@ -254,8 +257,8 @@ public class MyLevel extends RandomLevel{
     {	gaps++;
     	//jl: jump length
     	//js: the number of blocks that are available at either side for free
-        int js = random.nextInt(4) + 2;
-        int jl = random.nextInt(2) + 2;
+        int js = random.nextInt(2) + 4;
+        int jl = random.nextInt(4) + 4;
         int length = js * 2 + jl;
 
         boolean hasStairs = random.nextInt(3) == 0;
@@ -465,9 +468,9 @@ public class MyLevel extends RandomLevel{
             }
             if (xTube >= xo + length - 2) xTube += 10;
 
-            if (x == xTube && random.nextInt(11) < difficulty + 1)
+            if (x == xTube)
             {
-                setSpriteTemplate(x, tubeHeight, new SpriteTemplate(Enemy.ENEMY_FLOWER, false));
+                setSpriteTemplate(x, tubeHeight, new SpriteTemplate(Enemy.ENEMY_FLOWER, random.nextInt(ChompFlowers_weight) > random.nextInt(JumpFlowers_weight)));
                 ENEMIES++;
             }
 

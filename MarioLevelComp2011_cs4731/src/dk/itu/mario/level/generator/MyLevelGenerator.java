@@ -12,6 +12,7 @@ import dk.itu.mario.level.MyLevel;
 public class MyLevelGenerator extends CustomizedLevelGenerator implements LevelGenerator{
 
 	public LevelInterface generateLevel(GamePlay playerMetrics) {
+		Random random = new Random();
 		//Running is about 10 blocks/second
 		//Walking is about 5 blocks/second
 		int Time_Total = playerMetrics.totalTime;
@@ -28,7 +29,7 @@ public class MyLevelGenerator extends CustomizedLevelGenerator implements LevelG
 		if (Time_Taken < 45)
 			Time_Taken = 45;
 		int Level_Length = Time_Taken*5;
-		long Seed = 8;
+		long Seed = random.nextLong();
 		int height = 15;
 		int difficulty = 1;
 		System.out.println("Time To Comletion: " + playerMetrics.completionTime + " Total Time: " + Time_Total);
