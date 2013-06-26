@@ -14,16 +14,27 @@ public class MyLevelGenerator extends CustomizedLevelGenerator implements LevelG
 	public LevelInterface generateLevel(GamePlay playerMetrics) {
 		//Running is about 10 blocks/second
 		//Walking is about 5 blocks/second
-		int Completion_Time = playerMetrics.completionTime;
-		int Time_Run = playerMetrics.timeRunningRight-playerMetrics.timeRunningLeft*2;
-		int equive_walk_time = Completion_Time+Time_Run-playerMetrics.timeSpentDucking;
-		if (Completion_Time == 0)
-			equive_walk_time = playerMetrics.totalTime;
-		equive_walk_time = 60;
-		int Level_Length = equive_walk_time*5;
+		int Time_Total = playerMetrics.totalTime;
+		int Time_Run = playerMetrics.timeSpentRunning;
+		int Time_Duck = playerMetrics.timeSpentDucking;
+		int Deaths = playerMetrics.timesOfDeathByArmoredTurtle+playerMetrics.timesOfDeathByCannonBall+playerMetrics.timesOfDeathByChompFlower+(int)playerMetrics.timesOfDeathByFallingIntoGap+playerMetrics.timesOfDeathByGoomba+playerMetrics.timesOfDeathByGreenTurtle+playerMetrics.timesOfDeathByJumpFlower+playerMetrics.timesOfDeathByRedTurtle;
+		int Time_Taken = Time_Total - Time_Duck;
+		Time_Taken += Time_Run;
+		Time_Taken = Time_Taken/(Deaths+1);
+		if (playerMetrics.completionTime > Time_Taken)
+			Time_Taken = playerMetrics.completionTime;
+		if (Time_Taken > 120)
+			Time_Taken = 120;
+		if (Time_Taken < 30)
+			Time_Taken = 30;
+		int Level_Length = Time_Taken*5;
 		long Seed = 8;
-		System.out.println("Time to Complete: " + Completion_Time + " Time Running Left: " + playerMetrics.timeRunningLeft + " Time Running Right: " + playerMetrics.timeRunningRight + "New Length: " + Level_Length + " Seed: " + Seed);
-		LevelInterface level = new MyLevel(Level_Length,15,Seed,1,LevelInterface.TYPE_OVERGROUND,playerMetrics);
+		int height = 15;
+		int difficulty = 1;
+		System.out.println("Time To Comletion: " + playerMetrics.completionTime + " Total Time: " + Time_Total);
+		System.out.println("Time Taken: " + Time_Taken + " Time Run: " + Time_Run + " Time Duck: " + Time_Duck + " Deaths: " + Deaths);
+		System.out.println("Level Length: " + Level_Length + " Seed: " + Seed + " Difficulty: " + difficulty);
+		LevelInterface level = new MyLevel(Level_Length,height,Seed,difficulty,LevelInterface.TYPE_OVERGROUND,playerMetrics);
 		return level;
 	}
 

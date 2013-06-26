@@ -11,7 +11,7 @@ import dk.itu.mario.engine.sprites.SpriteTemplate;
 import dk.itu.mario.engine.sprites.Enemy;
 
 
-public class MyLevel extends Level{
+public class MyLevel extends RandomLevel{
 	//Store information about the level
 	 public   int ENEMIES = 0; //the number of enemies the level contains
 	 public   int BLOCKS_EMPTY = 0; // the number of empty blocks
@@ -58,7 +58,7 @@ public class MyLevel extends Level{
     {
         this.type = type;
         this.difficulty = difficulty;
-        this.difficulty = 5;
+        this.difficulty = 2;
         this.stats = playerMetrics;
         for(int i = 0; i < odds.length; i++)
         	odds[i] = 20;
@@ -153,14 +153,14 @@ public class MyLevel extends Level{
     {
     	if(this.stats != null)
     	{
-    		if(stats.coinsCollected/stats.totalCoins > SUCCESS_RATIO)
+    		if(stats.coinsCollected/(stats.totalCoins+1) > SUCCESS_RATIO)
     			//IsCoinCollector, increase number of coins at least, probably enemies as well
     		{
     			System.out.println("hi1");
     			odds[ODDS_STRAIGHT] *= 2;
     		}
     			
-    		if(stats.timeSpentRunning/stats.completionTime > SUCCESS_RATIO)
+    		if(stats.timeSpentRunning/(stats.completionTime+1) > SUCCESS_RATIO)
     		{
     			System.out.println("hi2");
     			odds[ODDS_STRAIGHT] /= 2;
@@ -174,7 +174,7 @@ public class MyLevel extends Level{
     		}
     		int totalKilled = stats.RedTurtlesKilled + stats.GreenTurtlesKilled +  stats.ArmoredTurtlesKilled + stats.CannonBallKilled + stats.JumpFlowersKilled + stats.ChompFlowersKilled;
     		
-    		if(totalKilled/stats.totalEnemies > SUCCESS_RATIO)
+    		if(totalKilled/(stats.totalEnemies+1) > SUCCESS_RATIO)
     		{
     			System.out.println("hi3");
     			this.difficulty = 4;
