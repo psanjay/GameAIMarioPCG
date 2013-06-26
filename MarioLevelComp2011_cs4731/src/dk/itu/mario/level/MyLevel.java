@@ -24,8 +24,9 @@ public class MyLevel extends RandomLevel{
 	 private static final int ODDS_TUBES = 2;
      private static final int ODDS_JUMP = 3;
 	 private static final int ODDS_CANNONS = 4;
+	 private static final int ODDS_CANNONJUMP = 5;
 	 
-	 private int[] odds = new int[5];
+	 private int[] odds = new int[6];
 	 private int totalOdds = 0;
  
 	private static Random levelSeedRandom = new Random(15);
@@ -166,7 +167,6 @@ public class MyLevel extends RandomLevel{
     		{
     			System.out.println("Runs A Lot");
     			odds[ODDS_STRAIGHT] /= 2;
-    			odds[ODDS_JUMP] *= 2;
     			odds[ODDS_CANNONS] *= 2;
     			Enemy_density += 1;
     		}
@@ -177,6 +177,7 @@ public class MyLevel extends RandomLevel{
     		for (int i=0; i < stats.timesOfDeathByFallingIntoGap; i++)
     		{
     			odds[ODDS_JUMP] *= 2;
+    			odds[ODDS_CANNONJUMP] = (int) (odds[ODDS_CANNONJUMP]*1.5);
     		}
     		int totalKilled = stats.GoombasKilled + stats.RedTurtlesKilled + stats.GreenTurtlesKilled +  stats.ArmoredTurtlesKilled + stats.CannonBallKilled + stats.JumpFlowersKilled + stats.ChompFlowersKilled;
     		
@@ -205,6 +206,7 @@ public class MyLevel extends RandomLevel{
     		if (CannonBall_weight > 10)
     		{
     			odds[ODDS_CANNONS] *= 2;
+    			odds[ODDS_CANNONJUMP] = (int) (odds[ODDS_CANNONJUMP]*1.5);
     		}
     		
     		if ((JumpFlowers_weight + ChompFlowers_weight) > 20)
@@ -248,6 +250,8 @@ public class MyLevel extends RandomLevel{
                 return buildStraight(x, maxLength, false);
         case ODDS_CANNONS:
             return buildCannons(x, maxLength);
+        case ODDS_CANNONJUMP:
+        	return buildCannon_Jump(x,maxLength);
         }
         return 0;
     }
@@ -431,7 +435,7 @@ public class MyLevel extends RandomLevel{
     {
         for (int x = x0; x < x1; x++)
         {
-            if (random.nextInt(15) < difficulty + 1)
+            if (random.nextInt(15) < difficulty + Enemy_density)
             {
                 int choice = random.nextInt(Goombas_weight + RedTurtles_weight + GreenTurtles_weight + ArmoredTurtles_weight);
                 int type = random.nextInt(4);
@@ -449,6 +453,60 @@ public class MyLevel extends RandomLevel{
                 ENEMIES++;
             }
         }
+    }
+    // Must hit a cannon to finish jump
+    private int buildCannon_Jump(int xo, int maxLength)
+    {
+    	int js = random.nextInt(2) + 8;
+        int jl = random.nextInt(4) + 8;
+        int length = js * 2 + jl;
+        
+        int floor = height - 1 - random.nextInt(4);
+        //run from the start x position, for the whole length
+        for (int x = xo; x < xo + length; x++)
+        {
+    		if (x < xo + js || x > xo + length - js - 1)
+    		{
+	      	//run for all y's since we need to paint blocks upward
+				for (int y = 0; y < height; y++)
+				{	//paint ground up until the floor
+					if (y >= floor)
+					{
+						setBlock(x, y, GROUND);
+					}
+				}
+    		}
+    		if ((x-xo) == (js - 8))
+    		{
+	    		for (int y = 0; y < height; y++)
+	            {
+	                if (y >= floor)
+	                {
+	                    setBlock(x, y, GROUND);
+	                }
+	                else
+	                {
+	                    if (y >= floor - 1)
+	                    {
+	                        if (y == floor - 1)
+	                        {
+	                            setBlock(x, y, (byte) (14 + 0 * 16));
+	                        }
+	                        else if (y == floor)
+	                        {
+	                            setBlock(x, y, (byte) (14 + 1 * 16));
+	                        }
+	                        else
+	                        {
+	                            setBlock(x, y, (byte) (14 + 2 * 16));
+	                        }
+	                    }
+	                }
+	            }
+    		}
+        }
+	
+        return length;
     }
 
     private int buildTubes(int xo, int maxLength)
