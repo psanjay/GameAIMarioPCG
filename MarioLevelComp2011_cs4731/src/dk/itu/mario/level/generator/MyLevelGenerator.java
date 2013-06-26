@@ -23,10 +23,10 @@ public class MyLevelGenerator extends CustomizedLevelGenerator implements LevelG
 		Time_Taken = Time_Taken/(Deaths+1);
 		if (playerMetrics.completionTime > Time_Taken)
 			Time_Taken = playerMetrics.completionTime;
-		if (Time_Taken > 120)
-			Time_Taken = 120;
-		if (Time_Taken < 30)
-			Time_Taken = 30;
+		if (Time_Taken > 90)
+			Time_Taken = 90;
+		if (Time_Taken < 45)
+			Time_Taken = 45;
 		int Level_Length = Time_Taken*5;
 		long Seed = 8;
 		int height = 15;

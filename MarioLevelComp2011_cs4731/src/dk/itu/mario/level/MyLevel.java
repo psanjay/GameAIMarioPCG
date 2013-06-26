@@ -39,8 +39,18 @@ public class MyLevel extends RandomLevel{
 	private int gaps;
 	private GamePlay stats;
 	
-	private final double SUCCESS_RATIO = 0.80;
+	private final double ENEMY_RATIO = 0.70;
+	private final double COIN_RATIO = 0.30;
+	private final double RUN_RATIO = 0.50;
 	
+	private int Goombas_weight = 10;
+	private int JumpFlowers_weight = 10;
+	private int ChompFlowers_weight = 10;
+	private int RedTurtles_weight = 10;
+	private int GreenTurtles_weight = 10;
+	private int CannonBall_weight = 10;
+	private int ArmoredTurtles_weight = 10;
+	private double Enemy_density = 1;
 	
 	public MyLevel(int width, int height)
     {
@@ -82,18 +92,6 @@ public class MyLevel extends RandomLevel{
         int length = 0;
         length += buildStraight(0, width, true);
 
-        //create all of the medium sections
-    /*    while (length < width - 64)
-        {
-            //length += buildZone(length, width - length);
-			length += buildStraight(length, width-length, false);
-			length += buildStraight(length, width-length, false);
-			length += buildHillStraight(length, width-length);
-			length += buildJump(length, width-length);
-			length += buildTubes(length, width-length);
-			length += buildCannons(length, width-length);
-        }*/
-        
         // Build as many sections as we can, each section built is decided randomly using odds
         while (length < width - 64)
         {
@@ -153,33 +151,64 @@ public class MyLevel extends RandomLevel{
     {
     	if(this.stats != null)
     	{
-    		if(stats.coinsCollected/(stats.totalCoins+1) > SUCCESS_RATIO)
+    		if(stats.coinsCollected/(stats.totalCoins+1.0) > COIN_RATIO)
     			//IsCoinCollector, increase number of coins at least, probably enemies as well
     		{
-    			System.out.println("hi1");
+    			System.out.println("Collected Coins");
     			odds[ODDS_STRAIGHT] *= 2;
+    			Enemy_density += 1;
+    		}
+    		else
+    		{
+    			System.out.println("Coins: " + stats.coinsCollected + " Total: " + stats.totalCoins);
     		}
     			
-    		if(stats.timeSpentRunning/(stats.completionTime+1) > SUCCESS_RATIO)
+    		if(stats.timeSpentRunning/(stats.totalTime+1.0) > RUN_RATIO)
     		{
-    			System.out.println("hi2");
+    			System.out.println("Runs A Lot");
     			odds[ODDS_STRAIGHT] /= 2;
     			odds[ODDS_JUMP] *= 2;
     			odds[ODDS_CANNONS] *= 2;
+    			Enemy_density += 1;
     		}
-    			// Is Speed Runner, increase number of enemies
-    		if(stats.aimlessJumps > 5)
+    		else
     		{
-    			int a = 5;
+    			System.out.println("Run: " + stats.timeSpentRunning + " Total: " + stats.totalTime);
     		}
-    		int totalKilled = stats.RedTurtlesKilled + stats.GreenTurtlesKilled +  stats.ArmoredTurtlesKilled + stats.CannonBallKilled + stats.JumpFlowersKilled + stats.ChompFlowersKilled;
-    		
-    		if(totalKilled/(stats.totalEnemies+1) > SUCCESS_RATIO)
+    		for (int i=0; i < stats.timesOfDeathByFallingIntoGap; i++)
     		{
-    			System.out.println("hi3");
-    			this.difficulty = 4;
     			odds[ODDS_JUMP] *= 2;
     		}
+    		int totalKilled = stats.GoombasKilled + stats.RedTurtlesKilled + stats.GreenTurtlesKilled +  stats.ArmoredTurtlesKilled + stats.CannonBallKilled + stats.JumpFlowersKilled + stats.ChompFlowersKilled;
+    		
+    		if(totalKilled/(stats.totalEnemies+1.0) > ENEMY_RATIO)
+    		{
+    			System.out.println("Kills a lot");
+    			this.difficulty = (totalKilled/(stats.totalEnemies+1))*5;
+    			odds[ODDS_JUMP] *= 2;
+    			Enemy_density *= 1.5;
+    		}
+    		else
+    		{
+    			this.difficulty = (totalKilled/(stats.totalEnemies+1))*5;
+    			System.out.println("Kills: " + totalKilled + " Total: " + stats.totalEnemies);
+    		}
+    		
+    		// Calculate weights to try and introduce as many units that the player can't handle
+    		Goombas_weight = 10 + stats.timesOfDeathByGoomba*5 - stats.GoombasKilled;
+    		JumpFlowers_weight = 10 + stats.timesOfDeathByJumpFlower*5 - stats.JumpFlowersKilled;
+    		ChompFlowers_weight = 10 + stats.timesOfDeathByChompFlower*5 - stats.ChompFlowersKilled;
+    		RedTurtles_weight = 10 + stats.timesOfDeathByRedTurtle*5 - stats.RedTurtlesKilled;
+    		GreenTurtles_weight = 10 + stats.timesOfDeathByGreenTurtle*5 - stats.GreenTurtlesKilled;
+    		CannonBall_weight = 10 + stats.CannonBallKilled*5 - stats.CannonBallKilled;
+    		ArmoredTurtles_weight = 10 + stats.ArmoredTurtlesKilled*5 - stats.ArmoredTurtlesKilled;
+    		
+    		if (CannonBall_weight > 10)
+    		{
+    			odds[ODDS_CANNONS] *= 2;
+    		}
+    		
+    		System.out.println("Goomba: " + Goombas_weight + " Jump: " + JumpFlowers_weight + " Chomp: " + ChompFlowers_weight + " Red: " + RedTurtles_weight + " Green: " + GreenTurtles_weight + " Spiky: " + ArmoredTurtles_weight + " Cannon: " + CannonBall_weight);
 
     		for(int i = 0; i < odds.length; i++)
     		{
@@ -400,19 +429,20 @@ public class MyLevel extends RandomLevel{
     {
         for (int x = x0; x < x1; x++)
         {
-            if (random.nextInt(35) < difficulty + 1)
+            if (random.nextInt(15) < difficulty + 1)
             {
+                int choice = random.nextInt(Goombas_weight + RedTurtles_weight + GreenTurtles_weight + ArmoredTurtles_weight);
                 int type = random.nextInt(4);
-
-                if (difficulty < 1)
-                {
-                    type = Enemy.ENEMY_GOOMBA;
-                }
-                else if (difficulty < 3)
-                {
-                    type = random.nextInt(3);
-                }
-
+                
+        		if (choice < Goombas_weight)
+        			type = Enemy.ENEMY_GOOMBA;
+        		else if (choice < GreenTurtles_weight+Goombas_weight)
+        			type = Enemy.ENEMY_GREEN_KOOPA;
+        		else if (choice < RedTurtles_weight+GreenTurtles_weight+Goombas_weight)
+        			type = Enemy.ENEMY_RED_KOOPA;
+        		else if (choice < ArmoredTurtles_weight+RedTurtles_weight+GreenTurtles_weight+Goombas_weight)
+        			type = Enemy.ENEMY_SPIKY;
+        		
                 setSpriteTemplate(x, y, new SpriteTemplate(type, random.nextInt(35) < difficulty));
                 ENEMIES++;
             }
