@@ -458,7 +458,7 @@ public class MyLevel extends RandomLevel{
     private int buildCannon_Jump(int xo, int maxLength)
     {
     	int js = random.nextInt(2) + 8;
-        int jl = random.nextInt(4) + 8;
+        int jl = random.nextInt(2) + 10;
         int length = js * 2 + jl;
         
         int floor = height - 1 - random.nextInt(4);
