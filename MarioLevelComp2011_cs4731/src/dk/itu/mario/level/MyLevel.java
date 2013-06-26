@@ -261,8 +261,8 @@ public class MyLevel extends RandomLevel{
     {	gaps++;
     	//jl: jump length
     	//js: the number of blocks that are available at either side for free
-        int js = random.nextInt(2) + 2;
-        int jl = random.nextInt(4) + 2;
+        int js = random.nextInt(2) + 4;
+        int jl = random.nextInt(4) + 4;
         int length = js * 2 + jl;
 
         boolean hasStairs = random.nextInt(3) == 0;
