@@ -68,7 +68,6 @@ public class MyLevel extends RandomLevel{
     {
         this.type = type;
         this.difficulty = difficulty;
-        this.difficulty = 2;
         this.stats = playerMetrics;
         for(int i = 0; i < odds.length; i++)
         	odds[i] = 20;
