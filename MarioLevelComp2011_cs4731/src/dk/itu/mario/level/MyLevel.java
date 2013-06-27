@@ -53,6 +53,8 @@ public class MyLevel extends RandomLevel{
 	private int ArmoredTurtles_weight = 10;
 	private double Enemy_density = 1;
 	
+	private int Previous = -1;
+	
 	public MyLevel(int width, int height)
     {
 		super(width, height);
@@ -155,11 +157,12 @@ public class MyLevel extends RandomLevel{
     			//IsCoinCollector, increase number of coins at least, probably enemies as well
     		{
     			System.out.println("Collected Coins");
-    			odds[ODDS_STRAIGHT] *= 2;
+    			odds[ODDS_HILL_STRAIGHT] = (int)(odds[ODDS_HILL_STRAIGHT]*1.5);
     			Enemy_density += 1;
     		}
     		else
     		{
+    			odds[ODDS_STRAIGHT] /= 2;
     			System.out.println("Coins: " + stats.coinsCollected + " Total: " + stats.totalCoins);
     		}
     			
@@ -167,7 +170,7 @@ public class MyLevel extends RandomLevel{
     		{
     			System.out.println("Runs A Lot");
     			odds[ODDS_STRAIGHT] /= 2;
-    			odds[ODDS_CANNONS] *= 2;
+    			odds[ODDS_CANNONS] = (int) (odds[ODDS_CANNONS]*1.5);
     			Enemy_density += 1;
     		}
     		else
@@ -184,8 +187,7 @@ public class MyLevel extends RandomLevel{
     		if(totalKilled/(stats.totalEnemies+1.0) > ENEMY_RATIO)
     		{
     			System.out.println("Kills a lot");
-    			this.difficulty = (totalKilled/(stats.totalEnemies+1))*5;
-    			odds[ODDS_JUMP] *= 2;
+    			this.difficulty = (totalKilled/(stats.totalEnemies+1))*10;
     			Enemy_density *= 1.5;
     		}
     		else
@@ -214,6 +216,8 @@ public class MyLevel extends RandomLevel{
     		
     		System.out.println("Goomba: " + Goombas_weight + " Jump: " + JumpFlowers_weight + " Chomp: " + ChompFlowers_weight + " Red: " + RedTurtles_weight + " Green: " + GreenTurtles_weight + " Spiky: " + ArmoredTurtles_weight + " Cannon: " + CannonBall_weight);
 
+    		odds[ODDS_CANNONJUMP] /= 2;
+    		
     		for(int i = 0; i < odds.length; i++)
     		{
     			System.out.println(i + ": " + odds[i]);
@@ -234,24 +238,28 @@ public class MyLevel extends RandomLevel{
         	if (odds[i] <= val) 
                 type = i;
         }
-
-        switch (type) 
+        
+        if (Previous != type)
         {
-        case ODDS_STRAIGHT:
-            return buildStraight(x, maxLength, false);
-        case ODDS_HILL_STRAIGHT:
-            return buildHillStraight(x, maxLength);
-        case ODDS_TUBES:
-            return buildTubes(x, maxLength);
-        case ODDS_JUMP:
-            if (gaps < Constraints.gaps)
-                return buildJump(x, maxLength);
-            else
-                return buildStraight(x, maxLength, false);
-        case ODDS_CANNONS:
-            return buildCannons(x, maxLength);
-        case ODDS_CANNONJUMP:
-        	return buildCannon_Jump(x,maxLength);
+        	Previous = type;
+		    switch (type) 
+		    {
+		    case ODDS_STRAIGHT:
+		        return buildStraight(x, maxLength, false);
+		    case ODDS_HILL_STRAIGHT:
+		        return buildHillStraight(x, maxLength);
+		    case ODDS_TUBES:
+		        return buildTubes(x, maxLength);
+		    case ODDS_JUMP:
+		        if (gaps < Constraints.gaps)
+		            return buildJump(x, maxLength);
+		        else
+		            return buildStraight(x, maxLength, false);
+		    case ODDS_CANNONS:
+		        return buildCannons(x, maxLength);
+		    case ODDS_CANNONJUMP:
+		    	return buildCannon_Jump(x,maxLength);
+		    }
         }
         return 0;
     }
@@ -266,6 +274,7 @@ public class MyLevel extends RandomLevel{
         int length = js * 2 + jl;
 
         boolean hasStairs = random.nextInt(3) == 0;
+        int fo = random.nextInt(3);
 
         int floor = height - 1 - random.nextInt(4);
       //run from the start x position, for the whole length
@@ -305,6 +314,11 @@ public class MyLevel extends RandomLevel{
                                 setBlock(x, y, ROCK);
                             }
                         }
+                        else if (((floor-3-fo) == y) && (x < (xo + js + 3*jl/4)) && (x > (xo + js + jl/4)))
+                		{
+                			setBlock(x, y,COIN);
+                			COINS++;
+                		}
                     }
                 }
             }
@@ -440,9 +454,10 @@ public class MyLevel extends RandomLevel{
 
     private void addEnemyLine(int x0, int x1, int y)
     {
+    	int Enemy_start = ENEMIES;
         for (int x = x0; x < x1; x++)
         {
-            if (random.nextInt(15) < difficulty + Enemy_density)
+            if ((random.nextInt(15) < difficulty + Enemy_density) && ((ENEMIES - Enemy_start) < (x1-x0)/3))
             {
                 int choice = random.nextInt(Goombas_weight + RedTurtles_weight + GreenTurtles_weight + ArmoredTurtles_weight);
                 int type = random.nextInt(4);
@@ -456,7 +471,7 @@ public class MyLevel extends RandomLevel{
         		else if (choice < ArmoredTurtles_weight+RedTurtles_weight+GreenTurtles_weight+Goombas_weight)
         			type = Enemy.ENEMY_SPIKY;
         		
-                setSpriteTemplate(x, y, new SpriteTemplate(type, random.nextInt(35) < difficulty));
+                setSpriteTemplate(x, y, new SpriteTemplate(type, random.nextInt(65) < difficulty*Enemy_density));
                 ENEMIES++;
             }
         }
@@ -483,7 +498,12 @@ public class MyLevel extends RandomLevel{
 					}
 				}
     		}
-    		if ((x-xo) == (js - 8))
+    		else if ( (x < (xo + js + 3*jl/4)) && (x > (xo + js + jl/4)))
+    		{
+    			setBlock(x, floor-3,COIN);
+    			COINS++;
+    		}
+    		if (((x-xo) == (js - 8)) || ((x-xo) == (2*js+jl-1)))
     		{
 	    		for (int y = 0; y < height; y++)
 	            {
@@ -512,6 +532,8 @@ public class MyLevel extends RandomLevel{
 	            }
     		}
         }
+        if (random.nextInt(20) > (difficulty+10))
+        	decorate(xo+js+2, xo + js + jl - 2, floor);
 	
         return length;
     }
