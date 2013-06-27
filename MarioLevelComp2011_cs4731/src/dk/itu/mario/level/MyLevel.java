@@ -78,6 +78,7 @@ public class MyLevel extends RandomLevel{
 
         lastSeed = seed;
         random = new Random(seed);
+        System.out.println("Seed:  " + seed);
         
         for (int i = 0; i < odds.length; i++) 
         {
