@@ -203,8 +203,8 @@ public class MyLevel extends RandomLevel{
     		ChompFlowers_weight = 10 + stats.timesOfDeathByChompFlower*5 - stats.ChompFlowersKilled;
     		RedTurtles_weight = 10 + stats.timesOfDeathByRedTurtle*5 - stats.RedTurtlesKilled;
     		GreenTurtles_weight = 10 + stats.timesOfDeathByGreenTurtle*5 - stats.GreenTurtlesKilled;
-    		CannonBall_weight = 10 + stats.CannonBallKilled*5 - stats.CannonBallKilled;
-    		ArmoredTurtles_weight = 10 + stats.ArmoredTurtlesKilled*5 - stats.ArmoredTurtlesKilled;
+    		CannonBall_weight = 10 + stats.timesOfDeathByCannonBall*5 - stats.CannonBallKilled;
+    		ArmoredTurtles_weight = 10 + stats.timesOfDeathByArmoredTurtle*5 - stats.ArmoredTurtlesKilled;
     		
     		if (CannonBall_weight > 10)
     		{
@@ -458,7 +458,7 @@ public class MyLevel extends RandomLevel{
     	int Enemy_start = ENEMIES;
         for (int x = x0; x < x1; x++)
         {
-            if ((random.nextInt(15) < difficulty + Enemy_density) && ((ENEMIES - Enemy_start) < (x1-x0)/3))
+            if ((random.nextInt(15) < (difficulty+10)*Enemy_density) && ((ENEMIES - Enemy_start) < (x1-x0)/3))
             {
                 int choice = random.nextInt(Goombas_weight + RedTurtles_weight + GreenTurtles_weight + ArmoredTurtles_weight);
                 int type = random.nextInt(4);
