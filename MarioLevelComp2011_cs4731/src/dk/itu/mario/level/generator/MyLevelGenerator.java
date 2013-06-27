@@ -1,3 +1,6 @@
+//Ryan Cook
+//Praveen Sanjay
+
 package dk.itu.mario.level.generator;
 
 import java.util.Random;
